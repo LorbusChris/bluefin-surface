@@ -13,8 +13,7 @@ RUN --mount=type=tmpfs,dst=/tmp \
     --mount=type=tmpfs,dst=/var \
     --mount=type=tmpfs,dst=/boot \
     --mount=type=bind,from=ctx,source=/,target=/ctx \
-    /ctx/build.sh && \
-    ostree container commit
+    /ctx/build_files/build.sh
     
 ### LINTING
 ## Verify final image and contents are correct.
