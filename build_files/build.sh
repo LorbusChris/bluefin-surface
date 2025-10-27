@@ -89,7 +89,7 @@ ADDITIONAL_FEDORA_PACKAGES=(
 )
 
 dnf -y install --skip-unavailable \
-    "${SURFACE_PACKAGES[@]}"
+    "${ADDITIONAL_FEDORA_PACKAGES[@]}"
 
 # Regenerate initramfs
 KERNEL_SUFFIX=""
