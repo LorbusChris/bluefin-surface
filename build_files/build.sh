@@ -74,6 +74,8 @@ dnf swap -y --enablerepo="linux-surface" \
     libwacom-data libwacom-surface-data
 dnf swap -y --enablerepo="linux-surface" \
     libwacom libwacom-surface
+dnf swap -y --enablerepo="fedora-updates-testing" \
+    calls calls
 
 # Install additional fedora packages
 ADDITIONAL_FEDORA_PACKAGES=(
