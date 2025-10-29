@@ -65,6 +65,8 @@ SURFACE_PACKAGES=(
     iptsd
 )
 dnf config-manager addrepo --from-repofile=https://pkg.surfacelinux.com/fedora/linux-surface.repo
+# Pin to surface-linux fedora 42 repo for now
+sed -i "s|^baseurl=https://pkg.surfacelinux.com/fedora/f$releasever/|baseurl=https://pkg.surfacelinux.com/fedora/f42/|" /etc/yum.repos.d/linux-surface.repo
 dnf config-manager setopt linux-surface.enabled=0
 dnf install -y --enablerepo="linux-surface" \
     "${SURFACE_PACKAGES[@]}"
