@@ -93,7 +93,7 @@ ADDITIONAL_FEDORA_PACKAGES=(
 dnf -y install --skip-unavailable \
     "${ADDITIONAL_FEDORA_PACKAGES[@]}"
 
-dnf swap -y --enablerepo="fedora-updates-testing" \
+dnf swap -y --enablerepo="updates-testing" \
     calls calls
 
 # Regenerate initramfs
