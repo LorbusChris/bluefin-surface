@@ -73,13 +73,10 @@ dnf swap -y --enablerepo="linux-surface" \
 
 # Install additional fedora packages
 ADDITIONAL_FEDORA_PACKAGES=(
-    #libcamera
-    #libcamera-tools
-    #libcamera-gstreamer
-    #libcamera-ipa
-    #pipewire-plugin-libcamera
-    #pipewire-v4l2
     gdb
+    v4l-utils
+    libcamera-qcam
+    #pipewire-v4l2
     nextcloud-client-nautilus
     firefox
     chromium
