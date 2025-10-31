@@ -31,8 +31,7 @@ dnf -y install \
     https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-"$(rpm -E %fedora)".noarch.rpm
 dnf -y install \
     v4l2loopback /tmp/akmods/kmods/*v4l2loopback*.rpm
-dnf config-manager setopt rpmfusion-free-release.enabled=0
-dnf config-manager setopt rpmfusion-nonfree-release.enabled=0
+dnf -y remove rpmfusion-free-release rpmfusion-nonfree-release
 
 # Configure surface kernel modules to load at boot
 tee /usr/lib/modules-load.d/ublue-surface.conf << EOF
