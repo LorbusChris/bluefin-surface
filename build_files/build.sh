@@ -60,16 +60,12 @@ surface_kbd
 
 EOF
 
-# Install surface packages
-SURFACE_PACKAGES=(
-    iptsd
-)
 dnf config-manager addrepo --from-repofile=https://pkg.surfacelinux.com/fedora/linux-surface.repo
 # Pin to surface-linux fedora 42 repo for now
 sed -i 's|^baseurl=https://pkg.surfacelinux.com/fedora/f$releasever/|baseurl=https://pkg.surfacelinux.com/fedora/f42/|' /etc/yum.repos.d/linux-surface.repo
 dnf config-manager setopt linux-surface.enabled=0
 dnf install -y --enablerepo="linux-surface" \
-    "${SURFACE_PACKAGES[@]}"
+    iptsd
 dnf swap -y --enablerepo="linux-surface" \
     libwacom-data libwacom-surface-data
 dnf swap -y --enablerepo="linux-surface" \
@@ -93,8 +89,10 @@ ADDITIONAL_FEDORA_PACKAGES=(
 dnf -y install --skip-unavailable \
     "${ADDITIONAL_FEDORA_PACKAGES[@]}"
 
-dnf swap -y --enablerepo="updates-testing" \
-    calls calls
+# calls-49.1.1-1.fc43
+dnf upgrade --enablerepo=updates-testing --refresh --advisory=FEDORA-2025-22ad4cfabc
+# feedbackd-0.8.6-3.fc43
+dnf upgrade --enablerepo=updates-testing --refresh --advisory=FEDORA-2025-147f8170eb
 
 # Regenerate initramfs
 KERNEL_SUFFIX=""
