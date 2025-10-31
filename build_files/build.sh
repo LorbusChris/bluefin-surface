@@ -3,7 +3,7 @@ set -xeuo pipefail
 
 # Remove Existing Kernel
 for pkg in kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra \
-        kmod-xone kmod-openrazer kmod-framework-laptop kmod-v4l2loopback; do
+        kmod-xone kmod-openrazer kmod-framework-laptop kmod-v4l2loopback v4l2loopback; do
     rpm --erase $pkg --nodeps
 done
 
@@ -17,7 +17,6 @@ mv /tmp/rpms/* /tmp/akmods/
 # Print some info
 tree /tmp/akmods/
 cat /etc/dnf/dnf.conf
-cat /etc/yum.repos.d/*
 
 # Install Kernel
 dnf -y install --setopt=disable_excludes=* \
@@ -27,16 +26,13 @@ dnf -y install --setopt=disable_excludes=* \
 
 dnf versionlock add kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra
 
-dnf -y copr enable ublue-os/staging
-dnf -y copr enable ublue-os/packages
-dnf -y copr enable ublue-os/akmods
-
 dnf -y install \
-    /tmp/akmods/kmods/*v4l2loopback*.rpm
-
-dnf -y copr disable ublue-os/staging
-dnf -y copr disable ublue-os/packages
-dnf -y copr disable ublue-os/akmods
+    https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-"$(rpm -E %fedora)".noarch.rpm \
+    https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-"$(rpm -E %fedora)".noarch.rpm
+dnf -y install \
+    v4l2loopback /tmp/akmods/kmods/*v4l2loopback*.rpm
+dnf config-manager setopt rpmfusion-free-release.enabled=0
+dnf config-manager setopt rpmfusion-nonfree-release.enabled=0
 
 # Configure surface kernel modules to load at boot
 tee /usr/lib/modules-load.d/ublue-surface.conf << EOF
@@ -79,7 +75,7 @@ dnf config-manager addrepo --from-repofile=https://pkg.surfacelinux.com/fedora/l
 # Pin to surface-linux fedora 42 repo for now
 sed -i 's|^baseurl=https://pkg.surfacelinux.com/fedora/f$releasever/|baseurl=https://pkg.surfacelinux.com/fedora/f42/|' /etc/yum.repos.d/linux-surface.repo
 dnf config-manager setopt linux-surface.enabled=0
-dnf -y install --enablerepo="linux-surface" \
+dnf -y install --repo="linux-surface" \
     iptsd
 dnf -y swap --repo="linux-surface" \
     libwacom-data libwacom-surface-data
