@@ -3,8 +3,8 @@ set -xeuo pipefail
 
 # Remove Existing Kernel
 for pkg in kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra \
-        kmod-xone kmod-openrazer kmod-framework-laptop; do
-    rpm $pkg --erase --nodeps
+        kmod-xone kmod-openrazer kmod-framework-laptop kmod-v4l2loopback v4l2loopback; do
+    rpm --erase $pkg --nodeps
 done
 
 # Fetch Common AKMODS & Kernel RPMS
@@ -27,8 +27,12 @@ dnf install --setopt=disable_excludes=* -y \
 
 dnf versionlock add kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra
 
+# Everyone
+# NOTE: we won't use dnf5 copr plugin for ublue-os/akmods until our upstream provides the COPR standard naming
+sed -i 's@enabled=0@enabled=1@g' /etc/yum.repos.d/_copr_ublue-os-akmods.repo
 dnf install -y \
     v4l2loopback /tmp/akmods/kmods/*v4l2loopback*.rpm
+sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/_copr_ublue-os-akmods.repo
 
 # Configure surface kernel modules to load at boot
 tee /usr/lib/modules-load.d/ublue-surface.conf << EOF
