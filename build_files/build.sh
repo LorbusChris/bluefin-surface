@@ -79,8 +79,11 @@ ADDITIONAL_FEDORA_PACKAGES=(
     #libcamera-ipa
     #pipewire-plugin-libcamera
     #pipewire-v4l2
+    gdb
     nextcloud-client-nautilus
     firefox
+    chromium
+    pmbootstrap
     calls
     feedbackd
     gnome-network-displays
