@@ -2,8 +2,9 @@
 set -xeuo pipefail
 
 # Remove Existing Kernel
-for pkg in kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra; do
-    rpm --erase $pkg --nodeps
+for pkg in kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra \
+        kmod-xone kmod-openrazer kmod-framework-laptop; do
+    rpm $pkg --erase --nodeps
 done
 
 # Fetch Common AKMODS & Kernel RPMS
@@ -12,16 +13,22 @@ AKMODS_TARGZ=$(jq -r '.layers[].digest' </tmp/akmods/manifest.json | cut -d : -f
 tar -xvzf /tmp/akmods/"$AKMODS_TARGZ" -C /tmp/
 mv /tmp/rpms/* /tmp/akmods/
 # NOTE: kernel-rpms should auto-extract into correct location
+
+# Print some info
+tree /tmp/akmods/
 cat /etc/dnf/dnf.conf
 cat /etc/yum.repos.d/*
 
 # Install Kernel
-dnf --setopt=disable_excludes=* -y install \
+dnf install --setopt=disable_excludes=* -y \
     /tmp/kernel-rpms/kernel-[0-9]*.rpm \
     /tmp/kernel-rpms/kernel-core-*.rpm \
     /tmp/kernel-rpms/kernel-modules-*.rpm
 
 dnf versionlock add kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra
+
+dnf install -y \
+    v4l2loopback /tmp/akmods/kmods/*v4l2loopback*.rpm
 
 # Configure surface kernel modules to load at boot
 tee /usr/lib/modules-load.d/ublue-surface.conf << EOF
@@ -81,7 +88,7 @@ ADDITIONAL_FEDORA_PACKAGES=(
     firefox
     chromium
     pmbootstrap
-    calls
+    #calls
     feedbackd
     gnome-network-displays
 )
@@ -90,7 +97,7 @@ dnf install -y --skip-unavailable \
     "${ADDITIONAL_FEDORA_PACKAGES[@]}"
 
 # calls-49.1.1-1.fc43
-dnf upgrade -y --enablerepo=updates-testing --refresh --advisory=FEDORA-2025-22ad4cfabc
+#dnf upgrade -y --enablerepo=updates-testing --refresh --advisory=FEDORA-2025-22ad4cfabc
 # feedbackd-0.8.6-3.fc43
 dnf upgrade -y --enablerepo=updates-testing --refresh --advisory=FEDORA-2025-147f8170eb
 
