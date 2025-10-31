@@ -20,19 +20,23 @@ cat /etc/dnf/dnf.conf
 cat /etc/yum.repos.d/*
 
 # Install Kernel
-dnf install --setopt=disable_excludes=* -y \
+dnf -y install --setopt=disable_excludes=* \
     /tmp/kernel-rpms/kernel-[0-9]*.rpm \
     /tmp/kernel-rpms/kernel-core-*.rpm \
     /tmp/kernel-rpms/kernel-modules-*.rpm
 
 dnf versionlock add kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra
 
-# Everyone
-# NOTE: we won't use dnf5 copr plugin for ublue-os/akmods until our upstream provides the COPR standard naming
-sed -i 's@enabled=0@enabled=1@g' /etc/yum.repos.d/_copr_ublue-os-akmods.repo
-dnf install -y \
+dnf -y copr enable ublue-os/staging
+dnf -y copr enable ublue-os/packages
+dnf -y copr enable ublue-os/akmods
+
+dnf -y install \
     v4l2loopback /tmp/akmods/kmods/*v4l2loopback*.rpm
-sed -i 's@enabled=1@enabled=0@g' /etc/yum.repos.d/_copr_ublue-os-akmods.repo
+
+dnf -y copr enable ublue-os/staging
+dnf -y copr enable ublue-os/packages
+dnf -y copr enable ublue-os/akmods
 
 # Configure surface kernel modules to load at boot
 tee /usr/lib/modules-load.d/ublue-surface.conf << EOF
@@ -75,11 +79,11 @@ dnf config-manager addrepo --from-repofile=https://pkg.surfacelinux.com/fedora/l
 # Pin to surface-linux fedora 42 repo for now
 sed -i 's|^baseurl=https://pkg.surfacelinux.com/fedora/f$releasever/|baseurl=https://pkg.surfacelinux.com/fedora/f42/|' /etc/yum.repos.d/linux-surface.repo
 dnf config-manager setopt linux-surface.enabled=0
-dnf install -y --enablerepo="linux-surface" \
+dnf -y install --enablerepo="linux-surface" \
     iptsd
-dnf swap -y --enablerepo="linux-surface" \
+dnf -y swap --repo="linux-surface" \
     libwacom-data libwacom-surface-data
-dnf swap -y --enablerepo="linux-surface" \
+dnf -y swap --repo="linux-surface" \
     libwacom libwacom-surface
 
 # Install additional fedora packages
@@ -97,13 +101,13 @@ ADDITIONAL_FEDORA_PACKAGES=(
     gnome-network-displays
 )
 
-dnf install -y --skip-unavailable \
+dnf -y install --skip-unavailable \
     "${ADDITIONAL_FEDORA_PACKAGES[@]}"
 
 # calls-49.1.1-1.fc43
-#dnf upgrade -y --enablerepo=updates-testing --refresh --advisory=FEDORA-2025-22ad4cfabc
+#dnf -y upgrade --repo=updates-testing --refresh --advisory=FEDORA-2025-22ad4cfabc
 # feedbackd-0.8.6-3.fc43
-dnf upgrade -y --enablerepo=updates-testing --refresh --advisory=FEDORA-2025-147f8170eb
+dnf -y upgrade --repo=updates-testing --refresh --advisory=FEDORA-2025-147f8170eb
 
 # Regenerate initramfs
 KERNEL_SUFFIX=""
