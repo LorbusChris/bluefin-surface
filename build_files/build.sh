@@ -31,8 +31,6 @@ dnf -y install \
     https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-"$(rpm -E %fedora)".noarch.rpm
 dnf -y install \
     v4l2loopback /tmp/akmods/kmods/*v4l2loopback*.rpm
-dnf -y install \
-    intel-media-driver
 dnf -y remove rpmfusion-free-release rpmfusion-nonfree-release
 
 # Configure surface kernel modules to load at boot
