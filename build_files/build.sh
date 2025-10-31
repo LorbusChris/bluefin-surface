@@ -34,9 +34,9 @@ dnf -y copr enable ublue-os/akmods
 dnf -y install \
     v4l2loopback /tmp/akmods/kmods/*v4l2loopback*.rpm
 
-dnf -y copr enable ublue-os/staging
-dnf -y copr enable ublue-os/packages
-dnf -y copr enable ublue-os/akmods
+dnf -y copr disable ublue-os/staging
+dnf -y copr disable ublue-os/packages
+dnf -y copr disable ublue-os/akmods
 
 # Configure surface kernel modules to load at boot
 tee /usr/lib/modules-load.d/ublue-surface.conf << EOF
