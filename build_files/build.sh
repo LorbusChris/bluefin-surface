@@ -3,7 +3,7 @@ set -xeuo pipefail
 
 # Remove Existing Kernel
 for pkg in kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra \
-        kmod-xone kmod-openrazer kmod-framework-laptop kmod-v4l2loopback v4l2loopback; do
+        kmod-xone kmod-openrazer kmod-framework-laptop kmod-v4l2loopback; do
     rpm --erase $pkg --nodeps
 done
 
@@ -32,7 +32,7 @@ dnf -y copr enable ublue-os/packages
 dnf -y copr enable ublue-os/akmods
 
 dnf -y install \
-    v4l2loopback /tmp/akmods/kmods/*v4l2loopback*.rpm
+    /tmp/akmods/kmods/*v4l2loopback*.rpm
 
 dnf -y copr disable ublue-os/staging
 dnf -y copr disable ublue-os/packages
