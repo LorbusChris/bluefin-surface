@@ -86,13 +86,13 @@ ADDITIONAL_FEDORA_PACKAGES=(
     gnome-network-displays
 )
 
-dnf -y install --skip-unavailable \
+dnf install -y --skip-unavailable \
     "${ADDITIONAL_FEDORA_PACKAGES[@]}"
 
 # calls-49.1.1-1.fc43
-dnf upgrade --enablerepo=updates-testing --refresh --advisory=FEDORA-2025-22ad4cfabc
+dnf upgrade -y --enablerepo=updates-testing --refresh --advisory=FEDORA-2025-22ad4cfabc
 # feedbackd-0.8.6-3.fc43
-dnf upgrade --enablerepo=updates-testing --refresh --advisory=FEDORA-2025-147f8170eb
+dnf upgrade -y --enablerepo=updates-testing --refresh --advisory=FEDORA-2025-147f8170eb
 
 # Regenerate initramfs
 KERNEL_SUFFIX=""
