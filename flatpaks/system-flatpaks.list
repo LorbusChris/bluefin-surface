@@ -28,7 +28,6 @@ app/org.gnome.baobab
 app/org.gnome.clocks
 app/org.gnome.font-viewer
 app/org.mozilla.Thunderbird
-app/org.mozilla.firefox
 app/page.tesk.Refine
 runtime/org.gtk.Gtk3theme.adw-gtk3
 runtime/org.gtk.Gtk3theme.adw-gtk3-dark
