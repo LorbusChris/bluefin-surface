@@ -35,28 +35,6 @@ dnf -y remove rpmfusion-free-release rpmfusion-nonfree-release
 
 # Configure surface kernel modules to load at boot
 tee /usr/lib/modules-load.d/ublue-surface.conf << EOF
-# Only on AMD models
-pinctrl_amd
-
-# Surface Book 2
-pinctrl_sunrisepoint
-
-# For Surface Laptop 3/Surface Book 3
-pinctrl_icelake
-
-# For Surface Laptop 4/Surface Laptop Studio
-pinctrl_tigerlake
-
-# For Surface Pro 9/Surface Laptop 5
-pinctrl_alderlake
-
-# For Surface Pro 10/Surface Laptop 6
-pinctrl_meteorlake
-
-# Only on Intel models
-intel_lpss
-intel_lpss_pci
-
 # Add modules necessary for Disk Encryption via keyboard
 surface_aggregator
 surface_aggregator_registry
@@ -67,6 +45,28 @@ surface_hid_core
 # Surface Laptop 3/Surface Book 3 and later
 surface_hid
 surface_kbd
+
+# Only on AMD models
+pinctrl_amd
+
+# Only on Intel models
+intel_lpss
+intel_lpss_pci
+
+# Surface Book 2
+pinctrl_sunrisepoint
+
+# For Surface Pro 7/Laptop 3/Book 3
+pinctrl_icelake
+
+# For Surface Pro 7+/Pro 8/Laptop 4/Laptop Studio
+pinctrl_tigerlake
+
+# For Surface Pro 9/Laptop 5
+pinctrl_alderlake
+
+# For Surface Pro 10/Laptop 6
+pinctrl_meteorlake
 
 EOF
 
@@ -81,29 +81,6 @@ dnf -y swap --repo="linux-surface" \
 dnf -y swap --repo="linux-surface" \
     libwacom libwacom-surface
 
-# Install additional fedora packages
-ADDITIONAL_FEDORA_PACKAGES=(
-    gdb
-    v4l-utils
-    libcamera-qcam
-    #pipewire-v4l2
-    nextcloud-client-nautilus
-    firefox
-    chromium
-    pmbootstrap
-    #calls
-    feedbackd
-    gnome-network-displays
-)
-
-dnf -y install --skip-unavailable \
-    "${ADDITIONAL_FEDORA_PACKAGES[@]}"
-
-# calls-49.1.1-1.fc43
-#dnf -y upgrade --repo=updates-testing --refresh --advisory=FEDORA-2025-22ad4cfabc
-# feedbackd-0.8.6-3.fc43
-dnf -y upgrade --repo=updates-testing --refresh --advisory=FEDORA-2025-147f8170eb
-
 # Regenerate initramfs
 KERNEL_SUFFIX=""
 QUALIFIED_KERNEL="$(rpm -qa | grep -P 'kernel-(|'"$KERNEL_SUFFIX"'-)(\d+\.\d+\.\d+)' | sed -E 's/kernel-(|'"$KERNEL_SUFFIX"'-)//')"
@@ -111,11 +88,28 @@ export DRACUT_NO_XATTR=1
 /usr/bin/dracut --no-hostonly --kver "$QUALIFIED_KERNEL" --reproducible -v --add ostree -f "/lib/modules/$QUALIFIED_KERNEL/initramfs.img"
 chmod 0600 "/lib/modules/$QUALIFIED_KERNEL/initramfs.img"
 
+# Install additional fedora packages
+ADDITIONAL_FEDORA_PACKAGES=(
+    chromium # for WebUSB
+    feedbackd # for gnome-calls
+    firefox # as RPM for GSConnect
+    gdb
+    gnome-network-displays
+    libcamera-qcam
+    nextcloud-client-nautilus
+    pmbootstrap
+    v4l-utils
+    wireshark
+)
+
+dnf -y install --skip-unavailable \
+    "${ADDITIONAL_FEDORA_PACKAGES[@]}"
+
+# feedbackd-0.8.6-3.fc43
+dnf -y upgrade --repo=updates-testing --refresh --advisory=FEDORA-2025-147f8170eb
+
 # Cleanup
 dnf clean all
 
 find /var/* -maxdepth 0 -type d \! -name cache -exec rm -fr {} \;
 find /var/cache/* -maxdepth 0 -type d \! -name libdnf5 \! -name rpm-ostree -exec rm -fr {} \;
-
-# Bootc
-bootc container lint 
