@@ -1,6 +1,13 @@
+app/ca.desrt.dconf-editor
+app/cc.arduino.IDE2
 app/de.leopoldluley.Clapgrep
 app/io.github.getnf.embellish
 app/io.github.ronniedroid.concessio
 app/io.podman_desktop.PodmanDesktop
 app/me.iepure.devtoolbox
+app/org.freedesktop.Bustle
+app/org.gnome.dspy
+app/org.pipewire.Helvum
+app/re.sonny.Commit
+app/re.sonny.Workbench
 app/sh.loft.devpod
