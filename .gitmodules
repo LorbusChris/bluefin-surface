@@ -1,0 +1,6 @@
+[submodule "system_files/shared/usr/share/gnome-shell/extensions/editdesktopfiles@dannflower"]
+	path = system_files/shared/usr/share/gnome-shell/extensions/editdesktopfiles@dannflower
+	url = https://github.com/Dannflower/edit-desktop-files.git
+[submodule "system_files/shared/usr/share/gnome-shell/extensions/weatherornot@somepaulo.github.io"]
+	path = system_files/shared/usr/share/gnome-shell/extensions/weatherornot@somepaulo.github.io
+	url = https://gitlab.gnome.org/somepaulo/weather-or-not.git

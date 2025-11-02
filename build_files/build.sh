@@ -98,6 +98,23 @@ ADDITIONAL_FEDORA_PACKAGES=(
     firefox # as RPM for GSConnect
     gdb
     gnome-network-displays
+    gnome-shell-extension-apps-menu
+    gnome-shell-extension-auto-move-windows
+    #gnome-shell-extension-caffeine
+    #gnome-shell-extension-dash-to-dock
+    gnome-shell-extension-drive-menu
+    #gnome-shell-extension-gsconnect
+    gnome-shell-extension-launch-new-instance
+    gnome-shell-extension-light-style
+    gnome-shell-extension-native-window-placement
+    gnome-shell-extension-places-menu
+    gnome-shell-extension-screenshot-window-sizer
+    gnome-shell-extension-status-icons
+    gnome-shell-extension-system-monitor
+    gnome-shell-extension-user-theme
+    gnome-shell-extension-windows-list
+    gnome-shell-extension-windowsNavigator
+    gnome-shell-extension-workspace-indicator
     libcamera-qcam
     nextcloud-client-nautilus
     pmbootstrap
@@ -110,6 +127,37 @@ dnf -y install --skip-unavailable \
 
 # feedbackd-0.8.6-3.fc43
 dnf -y upgrade --repo=updates-testing --refresh --advisory=FEDORA-2025-147f8170eb
+
+# GNOME Extensions
+# remove unneeded
+rm -rf /usr/share/gnome-shell/extensions/blur-my-shell@aunetx
+
+# add Clipboard Indicator
+# https://github.com/Tudmotu/gnome-shell-extension-clipboard-indicator
+
+# add Edit Desktop Files
+# https://github.com/Dannflower/edit-desktop-files
+glib-compile-schemas --strict /usr/share/gnome-shell/extensions/editdesktopfiles@dannflower/schemas
+
+# add GJS OSK
+# https://github.com/Vishram1123/gjs-osk
+
+# add Just Perfection
+# https://gitlab.gnome.org/jrahmatzadeh/just-perfection
+
+# add Screen Rotate
+# https://github.com/shyzus/gnome-shell-extension-screen-autorotate
+
+# add Weather or Not
+# https://gitlab.gnome.org/somepaulo/weather-or-not
+mv /usr/share/gnome-shell/extensions/weatherornot@somepaulo.github.io/weatherornot@somepaulo.github.io/* /usr/share/gnome-shell/extensions/weatherornot@somepaulo.github.io/
+rm -rf /usr/share/gnome-shell/extensions/blur-my-shell@aunetx/weatherornot@somepaulo.github.io-extension/weatherornot@somepaulo.github.io/
+rm -f /usr/share/gnome-shell/extensions/blur-my-shell@aunetx/weatherornot@somepaulo.github.io-extension.zip
+glib-compile-schemas --strict /usr/share/gnome-shell/extensions/weatherornot@somepaulo.github.io/schemas
+
+# Recompile grand schema
+rm /usr/share/glib-2.0/schemas/gschemas.compiled
+glib-compile-schemas /usr/share/glib-2.0/schemas
 
 # Cleanup
 dnf clean all
