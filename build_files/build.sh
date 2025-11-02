@@ -4,6 +4,9 @@ set -xeuo pipefail
 # Copy ISO list for `install-system-flatpaks`
 install -Dm0644 -t /etc/ublue-os/ /ctx/flatpaks/*.list
 
+# Remove Bluefin extensions
+rm -rf /usr/share/gnome-shell/extensions/*
+
 # Copy Files to Container
 rsync -rvK /ctx/system_files/shared/ /
 
@@ -95,48 +98,7 @@ export DRACUT_NO_XATTR=1
 /usr/bin/dracut --no-hostonly --kver "$QUALIFIED_KERNEL" --reproducible -v --add ostree -f "/lib/modules/$QUALIFIED_KERNEL/initramfs.img"
 chmod 0600 "/lib/modules/$QUALIFIED_KERNEL/initramfs.img"
 
-# Install additional fedora packages
-ADDITIONAL_FEDORA_PACKAGES=(
-    chromium # for WebUSB
-    feedbackd # for gnome-calls
-    firefox # as RPM for GSConnect
-    gdb
-    gnome-network-displays
-    #gnome-shell-extension-appindicator
-    gnome-shell-extension-apps-menu
-    gnome-shell-extension-auto-move-windows
-    #gnome-shell-extension-caffeine
-    #gnome-shell-extension-dash-to-dock
-    gnome-shell-extension-drive-menu
-    #gnome-shell-extension-gsconnect
-    gnome-shell-extension-launch-new-instance
-    gnome-shell-extension-light-style
-    gnome-shell-extension-native-window-placement
-    gnome-shell-extension-places-menu
-    gnome-shell-extension-screenshot-window-sizer
-    gnome-shell-extension-status-icons
-    gnome-shell-extension-system-monitor
-    gnome-shell-extension-user-theme
-    gnome-shell-extension-window-list
-    gnome-shell-extension-windowsNavigator
-    gnome-shell-extension-workspace-indicator
-    libcamera-qcam
-    nextcloud-client-nautilus
-    pmbootstrap
-    v4l-utils
-    wireshark
-)
-
-dnf -y install --skip-unavailable \
-    "${ADDITIONAL_FEDORA_PACKAGES[@]}"
-
-# feedbackd-0.8.6-3.fc43
-dnf -y upgrade --repo=updates-testing --refresh --advisory=FEDORA-2025-147f8170eb
-
 # GNOME Extensions
-# remove unneeded
-rm -rf /usr/share/gnome-shell/extensions/blur-my-shell@aunetx
-
 # add Clipboard Indicator
 # https://github.com/Tudmotu/gnome-shell-extension-clipboard-indicator
 
@@ -163,6 +125,44 @@ glib-compile-schemas --strict /usr/share/gnome-shell/extensions/weatherornot@som
 # Recompile grand schema
 rm /usr/share/glib-2.0/schemas/gschemas.compiled
 glib-compile-schemas /usr/share/glib-2.0/schemas
+
+# Install additional fedora packages
+ADDITIONAL_FEDORA_PACKAGES=(
+    chromium # for WebUSB
+    feedbackd # for gnome-calls
+    firefox # as RPM for GSConnect
+    gdb
+    gnome-network-displays
+    gnome-shell-extension-appindicator
+    gnome-shell-extension-apps-menu
+    gnome-shell-extension-auto-move-windows
+    gnome-shell-extension-caffeine
+    gnome-shell-extension-dash-to-dock
+    gnome-shell-extension-drive-menu
+    gnome-shell-extension-gsconnect
+    gnome-shell-extension-launch-new-instance
+    gnome-shell-extension-light-style
+    gnome-shell-extension-native-window-placement
+    gnome-shell-extension-places-menu
+    gnome-shell-extension-screenshot-window-sizer
+    gnome-shell-extension-status-icons
+    gnome-shell-extension-system-monitor
+    gnome-shell-extension-user-theme
+    gnome-shell-extension-window-list
+    gnome-shell-extension-windowsNavigator
+    gnome-shell-extension-workspace-indicator
+    libcamera-qcam
+    nextcloud-client-nautilus
+    pmbootstrap
+    v4l-utils
+    wireshark
+)
+
+dnf -y install --skip-unavailable \
+    "${ADDITIONAL_FEDORA_PACKAGES[@]}"
+
+# feedbackd-0.8.6-3.fc43
+dnf -y upgrade --repo=updates-testing --refresh --advisory=FEDORA-2025-147f8170eb
 
 # Cleanup
 dnf clean all
