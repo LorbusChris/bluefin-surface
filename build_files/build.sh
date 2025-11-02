@@ -111,6 +111,28 @@ dnf -y install --skip-unavailable \
 # feedbackd-0.8.6-3.fc43
 dnf -y upgrade --repo=updates-testing --refresh --advisory=FEDORA-2025-147f8170eb
 
+#dnf -y reinstall \
+#    gnome-shell-extension-apps-menu \
+#    gnome-shell-extension-gsconnect \
+#    gnome-shell-extension-launch-new-instance \
+#    gnome-shell-extension-places-menu \
+#    gnome-shell-extension-window-list
+
+dnf -y install \
+    gnome-shell-extension-appindicator \
+    gnome-shell-extension-auto-move-windows \
+    gnome-shell-extension-caffeine \
+    gnome-shell-extension-dash-to-dock \
+    gnome-shell-extension-drive-menu \
+    gnome-shell-extension-light-style \
+    gnome-shell-extension-native-window-placement \
+    gnome-shell-extension-screenshot-window-sizer \
+    gnome-shell-extension-status-icons \
+    gnome-shell-extension-system-monitor \
+    gnome-shell-extension-user-theme \
+    gnome-shell-extension-windowsNavigator \
+    gnome-shell-extension-workspace-indicator
+
 # Cleanup
 dnf clean all
 
