@@ -28,10 +28,9 @@ cat /etc/dnf/dnf.conf
 dnf -y install --setopt=disable_excludes=* \
     /tmp/kernel-rpms/kernel-[0-9]*.rpm \
     /tmp/kernel-rpms/kernel-core-*.rpm \
-    /tmp/kernel-rpms/kernel-tools-*.rpm \
     /tmp/kernel-rpms/kernel-modules-*.rpm
 
-dnf versionlock add kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra kernel-tools
+dnf versionlock add kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra
 
 dnf -y install \
     https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-"$(rpm -E %fedora)".noarch.rpm \
