@@ -8,7 +8,7 @@ install -Dm0644 -t /etc/ublue-os/ /ctx/flatpaks/*.list
 rsync -rvK /ctx/system_files/shared/ /
 
 # Remove Existing Kernel
-for pkg in kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra \
+for pkg in kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra kernel-tools \
         kmod-xone kmod-openrazer kmod-framework-laptop kmod-v4l2loopback v4l2loopback; do
     rpm --erase $pkg --nodeps
 done
@@ -28,9 +28,10 @@ cat /etc/dnf/dnf.conf
 dnf -y install --setopt=disable_excludes=* \
     /tmp/kernel-rpms/kernel-[0-9]*.rpm \
     /tmp/kernel-rpms/kernel-core-*.rpm \
+    /tmp/kernel-rpms/kernel-tools-*.rpm \
     /tmp/kernel-rpms/kernel-modules-*.rpm
 
-dnf versionlock add kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra
+dnf versionlock add kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra kernel-tools
 
 dnf -y install \
     https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-"$(rpm -E %fedora)".noarch.rpm \
@@ -101,6 +102,7 @@ ADDITIONAL_FEDORA_PACKAGES=(
     firefox # as RPM for GSConnect
     gdb
     gnome-network-displays
+    #gnome-shell-extension-appindicator
     gnome-shell-extension-apps-menu
     gnome-shell-extension-auto-move-windows
     #gnome-shell-extension-caffeine
