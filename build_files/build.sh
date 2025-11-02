@@ -151,8 +151,8 @@ glib-compile-schemas --strict /usr/share/gnome-shell/extensions/editdesktopfiles
 # add Weather or Not
 # https://gitlab.gnome.org/somepaulo/weather-or-not
 mv /usr/share/gnome-shell/extensions/weatherornot@somepaulo.github.io/weatherornot@somepaulo.github.io/* /usr/share/gnome-shell/extensions/weatherornot@somepaulo.github.io/
-rm -rf /usr/share/gnome-shell/extensions/blur-my-shell@aunetx/weatherornot@somepaulo.github.io-extension/weatherornot@somepaulo.github.io/
-rm -f /usr/share/gnome-shell/extensions/blur-my-shell@aunetx/weatherornot@somepaulo.github.io-extension.zip
+rm -rf /usr/share/gnome-shell/extensions/weatherornot@somepaulo.github.io-extension/weatherornot@somepaulo.github.io/
+rm -f /usr/share/gnome-shell/extensions/weatherornot@somepaulo.github.io-extension.zip
 glib-compile-schemas --strict /usr/share/gnome-shell/extensions/weatherornot@somepaulo.github.io/schemas
 
 # Recompile grand schema
