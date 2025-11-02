@@ -4,11 +4,8 @@ set -xeuo pipefail
 # Copy ISO list for `install-system-flatpaks`
 install -Dm0644 -t /etc/ublue-os/ /ctx/flatpaks/*.list
 
-# Remove Bluefin extensions
-rm -rf /usr/share/gnome-shell/extensions/*
-
 # Remove Existing Kernel
-for pkg in kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra kernel-tools \
+for pkg in kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra \
         kmod-xone kmod-openrazer kmod-framework-laptop kmod-v4l2loopback v4l2loopback; do
     rpm --erase $pkg --nodeps
 done
@@ -38,8 +35,6 @@ dnf -y install \
 dnf -y install \
     v4l2loopback /tmp/akmods/kmods/*v4l2loopback*.rpm
 dnf -y remove rpmfusion-free-release rpmfusion-nonfree-release
-
-ls -al /boot
 
 # Configure surface kernel modules to load at boot
 tee /usr/lib/modules-load.d/ublue-surface.conf << EOF
@@ -89,6 +84,13 @@ dnf -y swap --repo="linux-surface" \
 dnf -y swap --repo="linux-surface" \
     libwacom libwacom-surface
 
+# Regenerate initramfs
+KERNEL_SUFFIX=""
+QUALIFIED_KERNEL="$(rpm -qa | grep -P 'kernel-(|'"$KERNEL_SUFFIX"'-)(\d+\.\d+\.\d+)' | sed -E 's/kernel-(|'"$KERNEL_SUFFIX"'-)//')"
+export DRACUT_NO_XATTR=1
+/usr/bin/dracut --no-hostonly --kver "$QUALIFIED_KERNEL" --reproducible -v --add ostree -f "/lib/modules/$QUALIFIED_KERNEL/initramfs.img"
+chmod 0600 "/lib/modules/$QUALIFIED_KERNEL/initramfs.img"
+
 # Install additional fedora packages
 ADDITIONAL_FEDORA_PACKAGES=(
     chromium # for WebUSB
@@ -109,76 +111,8 @@ dnf -y install --skip-unavailable \
 # feedbackd-0.8.6-3.fc43
 dnf -y upgrade --repo=updates-testing --refresh --advisory=FEDORA-2025-147f8170eb
 
-dnf -y reinstall \
-    gnome-shell-extension-apps-menu \
-    gnome-shell-extension-gsconnect \
-    gnome-shell-extension-launch-new-instance \
-    gnome-shell-extension-places-menu \
-    gnome-shell-extension-window-list
-
-dnf -y install \
-    gnome-shell-extension-appindicator \
-    gnome-shell-extension-auto-move-windows \
-    gnome-shell-extension-caffeine \
-    gnome-shell-extension-dash-to-dock \
-    gnome-shell-extension-drive-menu \
-    gnome-shell-extension-light-style \
-    gnome-shell-extension-native-window-placement \
-    gnome-shell-extension-screenshot-window-sizer \
-    gnome-shell-extension-status-icons \
-    gnome-shell-extension-system-monitor \
-    gnome-shell-extension-user-theme \
-    gnome-shell-extension-windowsNavigator \
-    gnome-shell-extension-workspace-indicator
-
-# GNOME Extensions
-# Copy Files to Container
-rsync -rvK /ctx/system_files/shared/ /
-
-ls -al /boot
-
-# add Clipboard Indicator
-# https://github.com/Tudmotu/gnome-shell-extension-clipboard-indicator
-
-# add Edit Desktop Files
-# https://github.com/Dannflower/edit-desktop-files
-glib-compile-schemas --strict /usr/share/gnome-shell/extensions/editdesktopfiles@dannflower/schemas
-
-# add GJS OSK
-# https://github.com/Vishram1123/gjs-osk
-
-# add Just Perfection
-# https://gitlab.gnome.org/jrahmatzadeh/just-perfection
-
-# add Screen Rotate
-# https://github.com/shyzus/gnome-shell-extension-screen-autorotate
-
-# add Weather or Not
-# https://gitlab.gnome.org/somepaulo/weather-or-not
-mv /usr/share/gnome-shell/extensions/weatherornot@somepaulo.github.io/weatherornot@somepaulo.github.io/* /usr/share/gnome-shell/extensions/weatherornot@somepaulo.github.io/
-rm -rf /usr/share/gnome-shell/extensions/weatherornot@somepaulo.github.io-extension/weatherornot@somepaulo.github.io/
-rm -f /usr/share/gnome-shell/extensions/weatherornot@somepaulo.github.io-extension.zip
-glib-compile-schemas --strict /usr/share/gnome-shell/extensions/weatherornot@somepaulo.github.io/schemas
-
-ls -al /boot
-
-# Recompile grand schema
-rm /usr/share/glib-2.0/schemas/gschemas.compiled
-glib-compile-schemas /usr/share/glib-2.0/schemas
-
-ls -al /boot
-
-# Regenerate initramfs
-KERNEL_SUFFIX=""
-QUALIFIED_KERNEL="$(rpm -qa | grep -P 'kernel-(|'"$KERNEL_SUFFIX"'-)(\d+\.\d+\.\d+)' | sed -E 's/kernel-(|'"$KERNEL_SUFFIX"'-)//')"
-export DRACUT_NO_XATTR=1
-/usr/bin/dracut --no-hostonly --kver "$QUALIFIED_KERNEL" --reproducible -v --add ostree -f "/lib/modules/$QUALIFIED_KERNEL/initramfs.img"
-chmod 0600 "/lib/modules/$QUALIFIED_KERNEL/initramfs.img"
-
 # Cleanup
 dnf clean all
-
-ls -al /boot
 
 find /var/* -maxdepth 0 -type d \! -name cache -exec rm -fr {} \;
 find /var/cache/* -maxdepth 0 -type d \! -name libdnf5 \! -name rpm-ostree -exec rm -fr {} \;
