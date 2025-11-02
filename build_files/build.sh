@@ -39,6 +39,8 @@ dnf -y install \
     v4l2loopback /tmp/akmods/kmods/*v4l2loopback*.rpm
 dnf -y remove rpmfusion-free-release rpmfusion-nonfree-release
 
+ls -al /boot
+
 # Configure surface kernel modules to load at boot
 tee /usr/lib/modules-load.d/ublue-surface.conf << EOF
 # Add modules necessary for Disk Encryption via keyboard
@@ -133,6 +135,8 @@ dnf -y install \
 # Copy Files to Container
 rsync -rvK /ctx/system_files/shared/ /
 
+ls -al /boot
+
 # add Clipboard Indicator
 # https://github.com/Tudmotu/gnome-shell-extension-clipboard-indicator
 
@@ -156,9 +160,13 @@ rm -rf /usr/share/gnome-shell/extensions/weatherornot@somepaulo.github.io-extens
 rm -f /usr/share/gnome-shell/extensions/weatherornot@somepaulo.github.io-extension.zip
 glib-compile-schemas --strict /usr/share/gnome-shell/extensions/weatherornot@somepaulo.github.io/schemas
 
+ls -al /boot
+
 # Recompile grand schema
 rm /usr/share/glib-2.0/schemas/gschemas.compiled
 glib-compile-schemas /usr/share/glib-2.0/schemas
+
+ls -al /boot
 
 # Regenerate initramfs
 KERNEL_SUFFIX=""
