@@ -4,6 +4,9 @@ set -xeuo pipefail
 # Copy ISO list for `install-system-flatpaks`
 install -Dm0644 -t /etc/ublue-os/ /ctx/flatpaks/*.list
 
+# Copy Files to Container
+rsync -rvK /ctx/system_files/shared/ /
+
 # Remove Existing Kernel
 for pkg in kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra \
         kmod-xone kmod-openrazer kmod-framework-laptop kmod-v4l2loopback v4l2loopback; do
@@ -112,7 +115,7 @@ ADDITIONAL_FEDORA_PACKAGES=(
     gnome-shell-extension-status-icons
     gnome-shell-extension-system-monitor
     gnome-shell-extension-user-theme
-    gnome-shell-extension-windows-list
+    gnome-shell-extension-window-list
     gnome-shell-extension-windowsNavigator
     gnome-shell-extension-workspace-indicator
     libcamera-qcam
