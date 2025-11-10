@@ -108,9 +108,6 @@ ADDITIONAL_FEDORA_PACKAGES=(
 dnf -y install --skip-unavailable \
     "${ADDITIONAL_FEDORA_PACKAGES[@]}"
 
-# feedbackd-0.8.6-3.fc43
-dnf -y upgrade --repo=updates-testing --refresh --advisory=FEDORA-2025-147f8170eb
-
 #dnf -y reinstall \
 #    gnome-shell-extension-apps-menu \
 #    gnome-shell-extension-gsconnect \
