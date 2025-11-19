@@ -38,23 +38,8 @@ dnf -y remove rpmfusion-free-release rpmfusion-nonfree-release
 
 # Configure surface kernel modules to load at boot
 tee /usr/lib/modules-load.d/ublue-surface.conf << EOF
-# Add modules necessary for Disk Encryption via keyboard
-surface_aggregator
-surface_aggregator_registry
-surface_aggregator_hub
-surface_hid_core
-8250_dw
-
-# Surface Laptop 3/Surface Book 3 and later
-surface_hid
-surface_kbd
-
 # Only on AMD models
 pinctrl_amd
-
-# Only on Intel models
-intel_lpss
-intel_lpss_pci
 
 # Surface Book 2
 pinctrl_sunrisepoint
@@ -71,6 +56,21 @@ pinctrl_alderlake
 # For Surface Pro 10/Laptop 6
 pinctrl_meteorlake
 
+# Only on Intel models
+intel_lpss
+intel_lpss_pci
+
+# Add modules necessary for Disk Encryption via keyboard
+surface_aggregator
+surface_aggregator_registry
+surface_aggregator_hub
+surface_hid_core
+8250_dw
+
+# Surface Pro 7/Laptop 3/Book 3 and later
+surface_hid
+surface_kbd
+
 EOF
 
 dnf config-manager addrepo --from-repofile=https://pkg.surfacelinux.com/fedora/linux-surface.repo
@@ -83,13 +83,6 @@ dnf -y swap --repo="linux-surface" \
     libwacom-data libwacom-surface-data
 dnf -y swap --repo="linux-surface" \
     libwacom libwacom-surface
-
-# Regenerate initramfs
-KERNEL_SUFFIX=""
-QUALIFIED_KERNEL="$(rpm -qa | grep -P 'kernel-(|'"$KERNEL_SUFFIX"'-)(\d+\.\d+\.\d+)' | sed -E 's/kernel-(|'"$KERNEL_SUFFIX"'-)//')"
-export DRACUT_NO_XATTR=1
-/usr/bin/dracut --no-hostonly --kver "$QUALIFIED_KERNEL" --reproducible -v --add ostree -f "/lib/modules/$QUALIFIED_KERNEL/initramfs.img"
-chmod 0600 "/lib/modules/$QUALIFIED_KERNEL/initramfs.img"
 
 # Install additional fedora packages
 ADDITIONAL_FEDORA_PACKAGES=(
@@ -129,6 +122,13 @@ dnf -y install \
     gnome-shell-extension-user-theme \
     gnome-shell-extension-windowsNavigator \
     gnome-shell-extension-workspace-indicator
+
+# Regenerate initramfs
+KERNEL_SUFFIX=""
+QUALIFIED_KERNEL="$(rpm -qa | grep -P 'kernel-(|'"$KERNEL_SUFFIX"'-)(\d+\.\d+\.\d+)' | sed -E 's/kernel-(|'"$KERNEL_SUFFIX"'-)//')"
+export DRACUT_NO_XATTR=1
+/usr/bin/dracut --no-hostonly --kver "$QUALIFIED_KERNEL" --reproducible -v --add ostree -f "/lib/modules/$QUALIFIED_KERNEL/initramfs.img"
+chmod 0600 "/lib/modules/$QUALIFIED_KERNEL/initramfs.img"
 
 # Cleanup
 dnf clean all
