@@ -4,6 +4,14 @@ set -xeuo pipefail
 # Copy ISO list for `install-system-flatpaks`
 install -Dm0644 -t /etc/ublue-os/ /ctx/flatpaks/*.list
 
+# Bluefin fixups
+if [[ -f /usr/share/applications/gnome-system-monitor.desktop ]]; then
+    sed -i '/^Hidden=true/d' /usr/share/applications/gnome-system-monitor.desktop
+fi
+if [[ -f /usr/share/applications/org.gnome.SystemMonitor.desktop ]]; then
+    sed -i '/^Hidden=true/d' /usr/share/applications/org.gnome.SystemMonitor.desktop
+fi
+
 # Surface Variant
 if [[ "${IMAGE_NAME}" == "bluespin-surface" ]]; then
 
@@ -32,8 +40,13 @@ if [[ "${IMAGE_NAME}" == "bluespin-surface" ]]; then
 
     dnf versionlock add kernel kernel-core kernel-modules kernel-modules-core kernel-modules-extra
 
+    # Re-install v4l2loopback
+    dnf -y install \
+        https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-"$(rpm -E %fedora)".noarch.rpm \
+        https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-"$(rpm -E %fedora)".noarch.rpm
     dnf -y install \
         v4l2loopback /tmp/akmods/kmods/*v4l2loopback*.rpm
+    dnf -y remove rpmfusion-free-release rpmfusion-nonfree-release
 
     # Configure surface kernel modules to load at boot
     tee /usr/lib/modules-load.d/ublue-surface.conf << EOF
@@ -92,12 +105,6 @@ EOF
 
 fi
 
-dnf -y install \
-    https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-"$(rpm -E %fedora)".noarch.rpm \
-    https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-"$(rpm -E %fedora)".noarch.rpm
-
-dnf -y remove rpmfusion-free-release rpmfusion-nonfree-release
-
 # Install additional fedora packages
 ADDITIONAL_FEDORA_PACKAGES=(
     chromium # for WebUSB
@@ -105,7 +112,6 @@ ADDITIONAL_FEDORA_PACKAGES=(
     firefox # as RPM for GSConnect
     gdb
     gnome-network-displays
-    gnome-system-monitor
     libcamera-qcam
     nextcloud-client-nautilus
     pmbootstrap
